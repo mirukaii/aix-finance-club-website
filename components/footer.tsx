@@ -21,22 +21,25 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-[#0a0a0a] text-white relative">
+      {/* Top border gradient */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer */}
-        <div className="py-12 sm:py-16 lg:py-20 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-8">
+        <div className="py-16 sm:py-20 lg:py-28 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 sm:col-span-2 lg:col-span-4">
-            <div className="font-serif text-xl sm:text-2xl font-semibold tracking-tight mb-3 sm:mb-4">Aix Finance Club</div>
-            <p className="text-sm sm:text-base text-background/60 leading-relaxed max-w-sm">
-              L'association de finance de référence à Aix-en-Provence. Formation, networking et excellence.
+            <div className="font-serif text-2xl sm:text-3xl font-medium tracking-tight mb-4 sm:mb-5 text-white">Aix Finance Club</div>
+            <p className="text-sm sm:text-[15px] text-white/40 leading-relaxed max-w-sm">
+              L&apos;association de finance de référence à Aix-en-Provence. Formation, networking et excellence.
             </p>
-            <div className="flex gap-3 sm:gap-4 mt-6 sm:mt-8">
+            <div className="flex gap-3 sm:gap-4 mt-8 sm:mt-10">
               <a
                 href="https://www.linkedin.com/company/aix-finance-club"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-background/20 flex items-center justify-center text-background/60 hover:text-background hover:border-background/40 transition-all duration-200"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-white/50 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-4 w-4" />
@@ -45,14 +48,14 @@ export function Footer() {
                 href="https://instagram.com/aixfinanceclub"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-background/20 flex items-center justify-center text-background/60 hover:text-background hover:border-background/40 transition-all duration-200"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-white/50 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4" />
               </a>
               <a
                 href="mailto:aixfinanceclub@gmail.com"
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-background/20 flex items-center justify-center text-background/60 hover:text-background hover:border-background/40 transition-all duration-200"
+                className="w-10 h-10 sm:w-11 sm:h-11 rounded-full border border-white/[0.08] bg-white/[0.02] flex items-center justify-center text-white/50 hover:text-white hover:border-white/20 hover:bg-white/[0.05] transition-all duration-300"
                 aria-label="Email"
               >
                 <Mail className="h-4 w-4" />
@@ -63,8 +66,8 @@ export function Footer() {
           {/* Links */}
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category} className="col-span-1 lg:col-span-2">
-              <h3 className="text-[10px] sm:text-[11px] font-semibold tracking-widest uppercase text-background/40 mb-4 sm:mb-6">{category}</h3>
-              <ul className="space-y-3 sm:space-y-4">
+              <h3 className="text-[10px] sm:text-[11px] font-medium tracking-[0.2em] uppercase text-white/25 mb-5 sm:mb-7">{category}</h3>
+              <ul className="space-y-4 sm:space-y-5">
                 {links.map((link) => (
                   <li key={link.href}>
                     {link.isExternal ? (
@@ -72,15 +75,15 @@ export function Footer() {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs sm:text-sm text-background/70 hover:text-background transition-colors duration-200 inline-flex items-center gap-1 group break-all"
+                        className="text-[13px] sm:text-sm text-white/50 hover:text-white transition-all duration-300 inline-flex items-center gap-1 group break-all"
                       >
                         {link.label}
-                        <ArrowUpRight className="h-3 w-3 opacity-0 -translate-y-0.5 translate-x-0.5 group-hover:opacity-100 transition-all duration-200 shrink-0" />
+                        <ArrowUpRight className="h-3 w-3 opacity-0 -translate-y-0.5 translate-x-0.5 group-hover:opacity-100 transition-all duration-300 shrink-0" />
                       </a>
                     ) : (
                       <Link 
                         href={link.href} 
-                        className="text-xs sm:text-sm text-background/70 hover:text-background transition-colors duration-200"
+                        className="text-[13px] sm:text-sm text-white/50 hover:text-white transition-all duration-300"
                       >
                         {link.label}
                       </Link>
@@ -93,20 +96,20 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="py-6 sm:py-8 border-t border-background/10 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
-          <p className="text-[11px] sm:text-[13px] text-background/40 text-center sm:text-left">
+        <div className="py-8 sm:py-10 border-t border-white/[0.06] flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-5">
+          <p className="text-[11px] sm:text-[12px] text-white/25 text-center sm:text-left tracking-wide">
             © {new Date().getFullYear()} Aix Finance Club. Tous droits réservés.
           </p>
-          <div className="flex gap-4 sm:gap-8">
+          <div className="flex gap-6 sm:gap-10">
             <Link 
               href="/mentions-legales" 
-              className="text-[11px] sm:text-[13px] text-background/40 hover:text-background/70 transition-colors duration-200"
+              className="text-[11px] sm:text-[12px] text-white/25 hover:text-white/50 transition-all duration-300 tracking-wide"
             >
               Mentions légales
             </Link>
             <Link 
               href="/confidentialite" 
-              className="text-[11px] sm:text-[13px] text-background/40 hover:text-background/70 transition-colors duration-200"
+              className="text-[11px] sm:text-[12px] text-white/25 hover:text-white/50 transition-all duration-300 tracking-wide"
             >
               Confidentialité
             </Link>

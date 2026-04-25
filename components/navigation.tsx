@@ -12,7 +12,7 @@ export function Navigation() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20)
+      setScrolled(window.scrollY > 50)
     }
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
@@ -29,13 +29,13 @@ export function Navigation() {
   ]
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
       scrolled 
-        ? "bg-card/95 backdrop-blur-md border-b border-border/50 shadow-lg" 
-        : "bg-background/80 backdrop-blur-sm"
+        ? "bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-white/[0.06] shadow-2xl shadow-black/20" 
+        : "bg-transparent"
     }`}>
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 sm:h-20">
+        <div className="flex justify-between items-center h-18 sm:h-22">
           <Link href="/" className="flex items-center shrink-0">
             <Image
               src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/LOGO_SANS_ARRIERE_PLAN_VF-zb3KKrAQl2KTSvWnNF5ovBZ2EIWjm2.png"
@@ -48,14 +48,15 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Navigation - visible above 1024px */}
-          <div className="hidden lg:flex items-center gap-4 xl:gap-6">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="text-[12px] xl:text-[13px] font-medium tracking-wide uppercase transition-colors duration-200 text-muted-foreground hover:text-accent whitespace-nowrap"
+                className="relative text-[11px] xl:text-[12px] font-medium tracking-[0.15em] uppercase transition-all duration-300 text-white/60 hover:text-white whitespace-nowrap group"
               >
                 {item.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-px bg-gradient-to-r from-accent to-accent/50 transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
           </div>
@@ -65,7 +66,7 @@ export function Navigation() {
             <Button 
               size="sm" 
               asChild 
-              className="rounded-full px-4 xl:px-6 text-[12px] xl:text-[13px] font-medium tracking-wide bg-accent text-accent-foreground hover:bg-accent/90"
+              className="rounded-full px-5 xl:px-7 py-2.5 text-[11px] xl:text-[12px] font-semibold tracking-wider uppercase bg-white text-black hover:bg-white/90 transition-all duration-300 shadow-lg shadow-white/10"
             >
               <Link href="/candidatures">Rejoindre</Link>
             </Button>

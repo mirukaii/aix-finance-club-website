@@ -43,15 +43,15 @@ export function PublicationsFilters({ publications, categories }: PublicationsFi
 
   if (publications.length === 0) {
     return (
-      <section className="py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 bg-[#0a0a0a]">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="w-16 h-16 rounded-full bg-secondary mx-auto mb-8 flex items-center justify-center">
-            <FileText className="h-7 w-7 text-muted-foreground" strokeWidth={1.5} />
+          <div className="w-20 h-20 rounded-2xl bg-white/[0.03] border border-white/[0.06] mx-auto mb-10 flex items-center justify-center">
+            <FileText className="h-8 w-8 text-white/30" strokeWidth={1.5} />
           </div>
-          <h3 className="text-2xl sm:text-3xl font-serif font-medium text-foreground mb-6">
+          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-medium text-white mb-6">
             Publications à venir
           </h3>
-          <p className="text-muted-foreground leading-relaxed">
+          <p className="text-white/40 leading-relaxed text-base sm:text-lg">
             {"Notre équipe rédactionnelle prépare des analyses de qualité sur les marchés financiers et l'actualité économique."}
           </p>
         </div>
@@ -60,30 +60,32 @@ export function PublicationsFilters({ publications, categories }: PublicationsFi
   }
 
   return (
-    <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-background">
+    <section className="py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-[#0f0f0f] relative">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10 sm:mb-12">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-8 mb-12 sm:mb-16">
           <div>
-            <span className="text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-2 block">
+            <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-3 block">
               Explorer
             </span>
-            <h2 className="font-serif font-medium text-foreground">
+            <h2 className="font-serif font-medium text-white">
               Toutes nos publications
             </h2>
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          {/* Filters - Premium */}
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4">
             {/* Type Filter */}
-            <div className="flex items-center gap-1 p-1 bg-secondary/50 rounded-full">
+            <div className="flex items-center gap-1 p-1.5 bg-white/[0.02] border border-white/[0.06] rounded-full">
               <button
                 onClick={() => setSelectedType(null)}
                 className={cn(
-                  "px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                  "px-4 py-2 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-all duration-300",
                   !selectedType
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white text-black"
+                    : "text-white/50 hover:text-white/70"
                 )}
               >
                 Tous
@@ -91,10 +93,10 @@ export function PublicationsFilters({ publications, categories }: PublicationsFi
               <button
                 onClick={() => setSelectedType("article")}
                 className={cn(
-                  "px-3 py-1.5 rounded-full text-xs font-medium transition-all inline-flex items-center gap-1.5",
+                  "px-4 py-2 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-all duration-300 inline-flex items-center gap-1.5",
                   selectedType === "article"
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white text-black"
+                    : "text-white/50 hover:text-white/70"
                 )}
               >
                 <FileText className="w-3 h-3" />
@@ -103,10 +105,10 @@ export function PublicationsFilters({ publications, categories }: PublicationsFi
               <button
                 onClick={() => setSelectedType("carousel")}
                 className={cn(
-                  "px-3 py-1.5 rounded-full text-xs font-medium transition-all inline-flex items-center gap-1.5",
+                  "px-4 py-2 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-all duration-300 inline-flex items-center gap-1.5",
                   selectedType === "carousel"
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-white text-black"
+                    : "text-white/50 hover:text-white/70"
                 )}
               >
                 <Layers className="w-3 h-3" />
@@ -116,14 +118,14 @@ export function PublicationsFilters({ publications, categories }: PublicationsFi
 
             {/* Category Filter */}
             {categories.length > 0 && (
-              <div className="flex items-center gap-1 p-1 bg-secondary/50 rounded-full">
+              <div className="flex items-center gap-1 p-1.5 bg-white/[0.02] border border-white/[0.06] rounded-full">
                 <button
                   onClick={() => setSelectedCategory(null)}
                   className={cn(
-                    "px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                    "px-4 py-2 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-all duration-300",
                     !selectedCategory
-                      ? "bg-accent text-accent-foreground"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-accent text-white"
+                      : "text-white/50 hover:text-white/70"
                   )}
                 >
                   Toutes
@@ -133,10 +135,10 @@ export function PublicationsFilters({ publications, categories }: PublicationsFi
                     key={cat}
                     onClick={() => setSelectedCategory(cat)}
                     className={cn(
-                      "px-3 py-1.5 rounded-full text-xs font-medium transition-all whitespace-nowrap",
+                      "px-4 py-2 rounded-full text-[11px] font-semibold tracking-wider uppercase transition-all duration-300 whitespace-nowrap",
                       selectedCategory === cat
-                        ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:text-foreground"
+                        ? "bg-accent text-white"
+                        : "text-white/50 hover:text-white/70"
                     )}
                   >
                     {cat}
@@ -155,8 +157,8 @@ export function PublicationsFilters({ publications, categories }: PublicationsFi
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 border border-dashed border-border rounded-2xl">
-            <p className="text-muted-foreground">Aucune publication dans cette catégorie</p>
+          <div className="text-center py-20 border border-dashed border-white/[0.06] rounded-3xl bg-white/[0.01]">
+            <p className="text-white/40">Aucune publication dans cette catégorie</p>
           </div>
         )}
       </div>
@@ -171,10 +173,10 @@ function PublicationCard({ publication }: { publication: Publication }) {
   return (
     <Link
       href={`/publications/${publication.id}`}
-      className="group block bg-card rounded-2xl border border-border/50 overflow-hidden hover:border-accent/30 hover:shadow-xl hover:shadow-accent/5 transition-all duration-500"
+      className="group block bg-white/[0.02] rounded-2xl sm:rounded-3xl border border-white/[0.04] overflow-hidden hover:border-accent/30 hover:bg-white/[0.04] transition-all duration-500"
     >
       {/* Cover Image */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-secondary/30">
+      <div className="relative aspect-[16/10] overflow-hidden bg-white/[0.02]">
         {coverImage ? (
           <img
             src={coverImage}
@@ -182,14 +184,14 @@ function PublicationCard({ publication }: { publication: Publication }) {
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
           />
         ) : (
-          <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary to-background">
-            <span className="text-4xl font-serif text-muted-foreground/30">{publication.title[0]}</span>
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gradient-to-br from-white/[0.02] to-transparent">
+            <span className="text-4xl font-serif text-white/10">{publication.title[0]}</span>
           </div>
         )}
         
         {/* Type Badge */}
         <div className="absolute top-4 left-4">
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-background/90 backdrop-blur-sm text-foreground text-[10px] font-semibold tracking-wide uppercase rounded-full">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/60 backdrop-blur-md text-white/80 text-[10px] font-semibold tracking-wider uppercase rounded-full border border-white/10">
             {isCarousel ? (
               <>
                 <Layers className="w-3 h-3" />
@@ -206,28 +208,28 @@ function PublicationCard({ publication }: { publication: Publication }) {
       </div>
 
       {/* Content */}
-      <div className="p-5 sm:p-6">
+      <div className="p-6 sm:p-7">
         {/* Category */}
         {publication.category && (
-          <span className="inline-block text-[10px] font-semibold tracking-[0.15em] uppercase text-accent mb-3">
+          <span className="inline-block text-[10px] font-semibold tracking-[0.2em] uppercase text-accent mb-4">
             {publication.category}
           </span>
         )}
 
         {/* Title */}
-        <h3 className="font-serif text-lg sm:text-xl font-medium text-foreground mb-3 text-balance leading-snug group-hover:text-accent transition-colors">
+        <h3 className="font-serif text-lg sm:text-xl font-medium text-white mb-4 text-balance leading-snug group-hover:text-white/90 transition-colors">
           {publication.title}
         </h3>
 
         {/* Description */}
         {publication.description && (
-          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 mb-4">
+          <p className="text-sm text-white/35 leading-relaxed line-clamp-2 mb-5">
             {publication.description}
           </p>
         )}
 
         {/* Meta */}
-        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-4 text-[11px] text-white/30">
           {publication.author && (
             <span className="inline-flex items-center gap-1.5">
               <User className="w-3.5 h-3.5" />
@@ -253,8 +255,8 @@ function PublicationCard({ publication }: { publication: Publication }) {
         </div>
 
         {/* CTA */}
-        <div className="mt-5 pt-5 border-t border-border/50">
-          <span className="inline-flex items-center gap-2 text-sm font-medium text-foreground group-hover:text-accent group-hover:gap-3 transition-all">
+        <div className="mt-6 pt-6 border-t border-white/[0.04]">
+          <span className="inline-flex items-center gap-2 text-[12px] font-semibold tracking-wider uppercase text-accent group-hover:gap-3 transition-all">
             Lire
             <ArrowRight className="w-4 h-4" />
           </span>
