@@ -3,7 +3,7 @@
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import { Button } from '@/components/ui/button'
-import { Calendar, MapPin, Clock, ArrowUpRight, ChevronLeft } from 'lucide-react'
+import { Calendar, MapPin, Clock, ArrowUpRight, ArrowLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -56,10 +56,10 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
     return (
       <>
         <Navigation />
-        <main className="min-h-screen pt-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
           <div className="text-center">
             <div className="w-12 h-12 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-muted-foreground">Chargement de l'événement...</p>
+            <p className="text-white/40">Chargement...</p>
           </div>
         </main>
         <Footer />
@@ -82,92 +82,138 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
   return (
     <>
       <Navigation />
-      <main>
-        {/* Back Link */}
-        <div className="sticky top-16 z-40 bg-background/80 backdrop-blur-sm border-b border-border/50">
-          <div className="px-4 sm:px-6 lg:px-8 py-4">
-            <Link href="/evenements" className="inline-flex items-center gap-2 text-accent hover:text-accent/80 transition-colors font-medium">
-              <ChevronLeft className="h-4 w-4" />
-              Retour aux événements
-            </Link>
-          </div>
-        </div>
-
-        {/* Hero Banner */}
-        <section className="relative h-[60vh] min-h-[400px] flex items-end overflow-hidden bg-secondary/30">
+      <main className="bg-[#0a0a0a]">
+        {/* Hero Banner - Premium */}
+        <section className="relative min-h-[70vh] flex items-end overflow-hidden">
           {event.image_url && (
             <div className="absolute inset-0 z-0">
               <img
                 src={event.image_url}
                 alt={event.title}
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-cover object-center scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/70 to-transparent" />
+              <div className="absolute inset-0 bg-[#0a0a0a]/30" />
             </div>
           )}
 
-          {!event.image_url && <div className="absolute inset-0 bg-gradient-to-br from-secondary to-background" />}
+          {!event.image_url && (
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-[#0a0a0a]" />
+          )}
 
           {/* Content */}
-          <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12 lg:pb-16">
+          <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16 lg:pb-20 pt-32">
             <div className="w-full max-w-6xl mx-auto">
+              {/* Back Link */}
+              <Link
+                href="/evenements"
+                className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white mb-8 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Tous les evenements
+              </Link>
+
               {event.category && (
-                <div className="mb-4 sm:mb-6">
-                  <span className="inline-block px-3 py-1 bg-accent/90 text-accent-foreground text-xs font-semibold rounded-full">
+                <div className="mb-6 sm:mb-8">
+                  <span className="inline-flex items-center gap-2 px-4 py-2 bg-accent/20 backdrop-blur-sm text-accent text-[10px] sm:text-[11px] font-semibold tracking-[0.2em] uppercase rounded-full border border-accent/20">
                     {event.category}
                   </span>
                 </div>
               )}
-              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+              
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white mb-8 sm:mb-10 leading-[1.1] max-w-4xl">
                 {event.title}
               </h1>
+
+              <div className="flex flex-col sm:flex-row gap-6 sm:gap-10">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center shrink-0">
+                    <Calendar className="h-5 w-5 text-accent" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] sm:text-[11px] text-white/40 uppercase tracking-[0.15em] mb-1">Date</div>
+                    <div className="text-base sm:text-lg font-medium text-white capitalize">{formattedDate}</div>
+                  </div>
+                </div>
+
+                {event.time && (
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center shrink-0">
+                      <Clock className="h-5 w-5 text-accent" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] sm:text-[11px] text-white/40 uppercase tracking-[0.15em] mb-1">Heure</div>
+                      <div className="text-base sm:text-lg font-medium text-white">{event.time}</div>
+                    </div>
+                  </div>
+                )}
+
+                {event.location && (
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center shrink-0">
+                      <MapPin className="h-5 w-5 text-accent" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] sm:text-[11px] text-white/40 uppercase tracking-[0.15em] mb-1">Lieu</div>
+                      <div className="text-base sm:text-lg font-medium text-white">{event.location}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Content Section */}
-        <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-background">
-          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        {/* Content Section - Premium */}
+        <section className="py-16 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-[#0f0f0f] relative">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+          
+          <div className="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-16">
             {/* Main Content */}
             <div className="lg:col-span-2">
               {event.description && (
-                <div className="prose-article mb-12 animate-fade-in-up">
-                  {/* Render HTML description */}
-                  <div dangerouslySetInnerHTML={{ __html: event.description }} />
+                <div className="animate-fade-in-up">
+                  <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-6 block">
+                    A propos
+                  </span>
+                  <div 
+                    className="prose-article text-white/60 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: event.description }} 
+                  />
                 </div>
               )}
 
               {!event.description && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">Aucune description disponible pour cet événement.</p>
+                <div className="text-center py-16">
+                  <p className="text-white/40">Aucune description disponible pour cet evenement.</p>
                 </div>
               )}
             </div>
 
-            {/* Sticky Info Card */}
+            {/* Sticky Info Card - Premium */}
             <div className="lg:col-span-1">
-              <div className="sticky top-24 bg-secondary/50 backdrop-blur rounded-xl p-6 sm:p-8 border border-border/50 animate-fade-in-up">
-                <h2 className="font-serif text-xl font-bold text-foreground mb-6">Informations pratiques</h2>
+              <div className="sticky top-28 bg-white/[0.02] backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/[0.06] animate-fade-in-up">
+                <h2 className="font-serif text-xl font-medium text-white mb-8">Informations</h2>
 
                 {/* Date */}
-                <div className="mb-6 pb-6 border-b border-border/50">
-                  <div className="flex items-start gap-3">
+                <div className="mb-6 pb-6 border-b border-white/[0.06]">
+                  <div className="flex items-start gap-4">
                     <Calendar className="h-5 w-5 text-accent shrink-0 mt-0.5" />
                     <div>
-                      <div className="text-sm font-semibold text-accent uppercase tracking-wide mb-1">Date</div>
-                      <div className="text-foreground font-medium">{formattedDate}</div>
+                      <div className="text-[11px] font-semibold text-white/40 uppercase tracking-wider mb-1.5">Date</div>
+                      <div className="text-white font-medium capitalize">{formattedDate}</div>
                     </div>
                   </div>
                 </div>
 
                 {/* Time */}
                 {event.time && (
-                  <div className="mb-6 pb-6 border-b border-border/50">
-                    <div className="flex items-start gap-3">
+                  <div className="mb-6 pb-6 border-b border-white/[0.06]">
+                    <div className="flex items-start gap-4">
                       <Clock className="h-5 w-5 text-accent shrink-0 mt-0.5" />
                       <div>
-                        <div className="text-sm font-semibold text-accent uppercase tracking-wide mb-1">Heure</div>
-                        <div className="text-foreground font-medium">{event.time}</div>
+                        <div className="text-[11px] font-semibold text-white/40 uppercase tracking-wider mb-1.5">Heure</div>
+                        <div className="text-white font-medium">{event.time}</div>
                       </div>
                     </div>
                   </div>
@@ -175,12 +221,12 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
 
                 {/* Location */}
                 {event.location && (
-                  <div className="mb-6 pb-6 border-b border-border/50">
-                    <div className="flex items-start gap-3">
+                  <div className="mb-8 pb-6 border-b border-white/[0.06]">
+                    <div className="flex items-start gap-4">
                       <MapPin className="h-5 w-5 text-accent shrink-0 mt-0.5" />
                       <div>
-                        <div className="text-sm font-semibold text-accent uppercase tracking-wide mb-1">Lieu</div>
-                        <div className="text-foreground font-medium">{event.location}</div>
+                        <div className="text-[11px] font-semibold text-white/40 uppercase tracking-wider mb-1.5">Lieu</div>
+                        <div className="text-white font-medium">{event.location}</div>
                       </div>
                     </div>
                   </div>
@@ -191,32 +237,32 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
                   <Button
                     asChild
                     size="lg"
-                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold"
+                    className="w-full bg-white text-black hover:bg-white/90 rounded-full py-6 text-[13px] font-semibold tracking-wider uppercase shadow-2xl shadow-white/10 hover:shadow-white/20 transition-all duration-300"
                   >
                     <a href={event.ticket_url} target="_blank" rel="noopener noreferrer">
-                      Réserver ma place
-                      <ArrowUpRight className="ml-2 h-5 w-5" />
+                      Reserver ma place
+                      <ArrowUpRight className="ml-2 h-4 w-4" />
                     </a>
                   </Button>
                 )}
 
                 {!event.ticket_url && (
-                  <div className="w-full p-4 bg-accent/10 border border-accent/20 rounded-lg text-center">
-                    <p className="text-accent font-semibold">Entrée libre</p>
+                  <div className="w-full p-5 bg-accent/10 border border-accent/20 rounded-xl text-center">
+                    <p className="text-accent font-semibold text-sm">Entree libre</p>
                   </div>
                 )}
 
                 {/* Event Status */}
-                <div className="mt-6 pt-6 border-t border-border/50">
+                <div className="mt-8 pt-6 border-t border-white/[0.06]">
                   <div className="text-center">
                     <span
-                      className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
+                      className={`inline-block px-4 py-1.5 rounded-full text-[11px] font-semibold tracking-wider uppercase ${
                         event.status === 'upcoming'
                           ? 'bg-accent/20 text-accent'
-                          : 'bg-muted text-muted-foreground'
+                          : 'bg-white/[0.05] text-white/40'
                       }`}
                     >
-                      {event.status === 'upcoming' ? 'À venir' : 'Passé'}
+                      {event.status === 'upcoming' ? 'A venir' : 'Passe'}
                     </span>
                   </div>
                 </div>
@@ -225,19 +271,18 @@ export default function EventDetailPage({ params }: { params: Promise<{ id: stri
           </div>
         </section>
 
-        {/* Related Events */}
-        <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20 border-t border-border/50">
-          <div className="w-full max-w-6xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">Autres événements</h2>
-              <Link href="/evenements" className="text-accent hover:text-accent/80 transition-colors font-medium flex items-center gap-2">
-                Tous les événements
-                <ArrowUpRight className="h-4 w-4" />
-              </Link>
-            </div>
-            <div className="text-center py-12 text-muted-foreground">
-              <p>Consultez notre page d'événements pour découvrir nos autres activités.</p>
-            </div>
+        {/* Back to Events - Premium */}
+        <section className="py-16 sm:py-20 px-4 sm:px-6 lg:px-8 bg-[#0a0a0a] relative">
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+          
+          <div className="w-full max-w-6xl mx-auto text-center">
+            <Link
+              href="/evenements"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-white/[0.03] border border-white/[0.06] text-white rounded-full text-sm font-medium hover:bg-white/[0.06] hover:border-white/[0.1] transition-all duration-300"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Voir tous les evenements
+            </Link>
           </div>
         </section>
       </main>
