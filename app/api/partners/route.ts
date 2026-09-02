@@ -1,11 +1,20 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+
+function getAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 export async function GET() {
   try {
-    const supabase = await createClient()
-    const { data, error } = await supabase.from('partners').select('*').order('created_at', { ascending: false })
-
+    const supabase = getAdminClient()
+    const { data, error } = await supabase
+      .from('partners')
+      .select('*')
+      .order('display_order', { ascending: true })
     if (error) throw error
     return NextResponse.json({ data })
   } catch (error) {
@@ -16,16 +25,20 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = getAdminClient()
     const formData = await request.formData()
-
-    const { data, error } = await supabase.from('partners').insert({
-      name: formData.get('name'),
-      category: formData.get('category'),
-      logo_url: formData.get('logo_url'),
-      website_url: formData.get('website_url'),
-    }).select().single()
-
+    const { data, error } = await supabase
+      .from('partners')
+      .insert({
+        name: formData.get('name'),
+        category: formData.get('category') || null,
+        logo_url: formData.get('logo_url') || null,
+        website_url: formData.get('website_url') || null,
+        partnership_description: formData.get('partnership_description') || null,
+        display_order: parseInt(formData.get('display_order') as string) || 0,
+      })
+      .select()
+      .single()
     if (error) throw error
     return NextResponse.json({ data })
   } catch (error) {
