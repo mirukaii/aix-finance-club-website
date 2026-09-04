@@ -2,10 +2,10 @@ import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
 function getAdminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error(`ENV MANQUANTE: url=${!!url} key=${!!key}`)
+  return createClient(url, key)
 }
 
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
@@ -26,8 +26,8 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       .single()
     if (error) throw error
     return NextResponse.json({ data })
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update slot' }, { status: 500 })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || String(error), code: error.code, details: error.details, hint: error.hint }, { status: 500 })
   }
 }
 
@@ -37,7 +37,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const { error } = await supabase.from('interview_slots').delete().eq('id', params.id)
     if (error) throw error
     return NextResponse.json({ success: true })
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete slot' }, { status: 500 })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || String(error), code: error.code, details: error.details, hint: error.hint }, { status: 500 })
   }
 }

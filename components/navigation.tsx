@@ -24,6 +24,7 @@ export function Navigation() {
     { href: "/evenements", label: "Événements" },
     { href: "/publications", label: "Publications" },
     { href: "/equipe", label: "Équipe" },
+    { href: "/partenaires", label: "Partenaires" },
     { href: "/candidatures", label: "Candidatures" },
     { href: "/contact", label: "Contact" },
   ]
