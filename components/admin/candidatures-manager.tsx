@@ -100,8 +100,8 @@ export function CandidaturesManager() {
     const fd = new FormData(e.currentTarget)
     const body = {
       label: fd.get('label'),
-      date_start: fd.get('date_start'),
-      date_end: fd.get('date_end'),
+      date_start: new Date(fd.get('date_start') as string).toISOString(),
+      date_end: new Date(fd.get('date_end') as string).toISOString(),
       is_active: fd.get('is_active') === 'true',
       display_order: parseInt(fd.get('display_order') as string) || 0,
     }
@@ -133,7 +133,18 @@ export function CandidaturesManager() {
   }
 
   function formatDate(iso: string) {
-    return new Date(iso).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })
+    if (!iso) return ''
+    return new Date(iso).toLocaleString('fr-FR', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    })
+  }
+
+  function toLocalInput(iso?: string) {
+    if (!iso) return ''
+    const d = new Date(iso)
+    const pad = (n: number) => String(n).padStart(2, '0')
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
   }
 
   if (loading) return (
@@ -240,11 +251,11 @@ export function CandidaturesManager() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5">Début *</label>
-                    <input name="date_start" type="datetime-local" defaultValue={editingSlot?.date_start?.slice(0, 16) || ''} required className="w-full px-3 py-2.5 rounded-lg border border-border bg-secondary text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                    <input name="date_start" type="datetime-local" defaultValue={toLocalInput(editingSlot?.date_start)} required className="w-full px-3 py-2.5 rounded-lg border border-border bg-secondary text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5">Fin *</label>
-                    <input name="date_end" type="datetime-local" defaultValue={editingSlot?.date_end?.slice(0, 16) || ''} required className="w-full px-3 py-2.5 rounded-lg border border-border bg-secondary text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50" />
+                    <input name="date_end" type="datetime-local" defaultValue={toLocalInput(editingSlot?.date_end)} required className="w-full px-3 py-2.5 rounded-lg border border-border bg-secondary text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50" />
                   </div>
                 </div>
                 <div>
