@@ -103,7 +103,7 @@ export default async function PartenairesPage() {
                       </p>
                     )}
                     {partner.website_url && (
-                      
+                      <a
                         href={partner.website_url}
                         target="_blank"
                         rel="noopener noreferrer"
