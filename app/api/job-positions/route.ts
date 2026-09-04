@@ -1,23 +1,30 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+
+function getAdminClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) throw new Error(`ENV MANQUANTE: url=${!!url} key=${!!key}`)
+  return createClient(url, key)
+}
 
 export async function GET() {
   try {
-    const supabase = await createClient()
+    const supabase = getAdminClient()
     const { data, error } = await supabase
       .from('job_positions')
       .select('*')
       .order('display_order', { ascending: true })
     if (error) throw error
     return NextResponse.json({ data })
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch positions' }, { status: 500 })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || String(error), code: error.code, details: error.details, hint: error.hint }, { status: 500 })
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = await createClient()
+    const supabase = getAdminClient()
     const body = await request.json()
     const { data, error } = await supabase
       .from('job_positions')
@@ -33,7 +40,7 @@ export async function POST(request: NextRequest) {
       .single()
     if (error) throw error
     return NextResponse.json({ data })
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to create position' }, { status: 500 })
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message || String(error), code: error.code, details: error.details, hint: error.hint }, { status: 500 })
   }
 }
