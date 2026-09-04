@@ -8,8 +8,9 @@ function getAdminClient() {
   return createClient(url, key)
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = getAdminClient()
     const formData = await request.formData()
     const { data, error } = await supabase
@@ -22,7 +23,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         partnership_description: formData.get('partnership_description') || null,
         display_order: parseInt(formData.get('display_order') as string) || 0,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
     if (error) throw error
@@ -32,10 +33,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = getAdminClient()
-    const { error } = await supabase.from('partners').delete().eq('id', params.id)
+    const { error } = await supabase.from('partners').delete().eq('id', id)
     if (error) throw error
     return NextResponse.json({ success: true })
   } catch (error: any) {

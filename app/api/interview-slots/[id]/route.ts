@@ -8,8 +8,9 @@ function getAdminClient() {
   return createClient(url, key)
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = getAdminClient()
     const body = await request.json()
     const { data, error } = await supabase
@@ -21,7 +22,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
         is_active: body.is_active ?? true,
         display_order: body.display_order ?? 0,
       })
-      .eq('id', params.id)
+      .eq('id', id)
       .select()
       .single()
     if (error) throw error
@@ -31,10 +32,11 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = getAdminClient()
-    const { error } = await supabase.from('interview_slots').delete().eq('id', params.id)
+    const { error } = await supabase.from('interview_slots').delete().eq('id', id)
     if (error) throw error
     return NextResponse.json({ success: true })
   } catch (error: any) {
