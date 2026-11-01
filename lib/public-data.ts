@@ -134,3 +134,36 @@ export async function getOpenPositionsCount(): Promise<number> {
     return 0
   }
 }
+
+export type TeamMemberItem = {
+  id: string
+  first_name: string
+  last_name: string
+  role: string
+  photo_url: string | null
+  linkedin_url: string | null
+  display_order: number
+}
+
+export async function getTeamMembers(): Promise<TeamMemberItem[]> {
+  try {
+    const supabase = db()
+    if (!supabase) return []
+    const { data, error } = await supabase
+      .from("team_members")
+      .select("*")
+      .order("display_order", { ascending: true })
+    if (error || !data) return []
+    return data.map((m: any) => ({
+      id: String(m.id),
+      first_name: m.first_name || "",
+      last_name: m.last_name || "",
+      role: m.role || "",
+      photo_url: m.photo_url || null,
+      linkedin_url: m.linkedin_url || null,
+      display_order: Number(m.display_order) || 0,
+    }))
+  } catch {
+    return []
+  }
+}

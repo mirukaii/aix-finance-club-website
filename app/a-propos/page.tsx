@@ -1,242 +1,117 @@
+import Image from "next/image"
+import Link from "next/link"
+import type { ReactNode } from "react"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
-import { Target, Users, TrendingUp, Award, Mail, Instagram, ArrowUpRight } from "lucide-react"
+import { PageHeader } from "@/components/page-header"
+
+const INITIATIVES = [
+  { n: "01", title: "Conférences et interventions", text: "Rencontres avec des professionnels de la finance, traders, analystes et dirigeants d'entreprise." },
+  { n: "02", title: "Networking", text: "Événements de networking, alumni meetings et rencontres avec les acteurs du secteur." },
+  { n: "03", title: "Formations techniques", text: "Ateliers pratiques sur le trading, la modélisation financière et l'analyse de marchés." },
+  { n: "04", title: "Publications et veille", text: "Articles d'analyse, notes de marchés et veille sectorielle régulière." },
+]
+
+function Block({ label, title, children }: { label: string; title: string; children: ReactNode }) {
+  return (
+    <section className="px-5 sm:px-8 lg:px-12">
+      <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-8 border-b border-[#dcd8cf] py-14 sm:py-20 lg:grid-cols-12 lg:gap-12">
+        <div className="lg:col-span-4">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-[#6b6b66]">{label}</p>
+          <h2 className="mt-3 font-serif text-3xl leading-tight tracking-tight sm:text-4xl">{title}</h2>
+        </div>
+        <div className="space-y-5 text-base leading-relaxed text-[#4a4a46] sm:text-lg lg:col-span-8">{children}</div>
+      </div>
+    </section>
+  )
+}
 
 export default function AProposPage() {
-  const initiatives = [
-    {
-      icon: Target,
-      title: "Conférences et interventions",
-      description: "Rencontres avec des professionnels de la finance, traders, analystes et dirigeants d'entreprise.",
-    },
-    {
-      icon: Users,
-      title: "Networking",
-      description: "Événements de networking, alumni meetings et rencontres avec les acteurs du secteur.",
-    },
-    {
-      icon: TrendingUp,
-      title: "Formations techniques",
-      description: "Ateliers pratiques sur le trading, la modélisation financière et l'analyse de marchés.",
-    },
-    {
-      icon: Award,
-      title: "Publications et veille",
-      description: "Articles d'analyse, notes de marchés et veille sectorielle régulière.",
-    },
-  ]
-
   return (
     <>
       <Navigation />
-      <main>
-        {/* Hero - Premium White */}
-        <section className="min-h-[55vh] sm:min-h-[65vh] flex items-center px-4 sm:px-6 lg:px-8 bg-white text-black pt-24 sm:pt-28 relative overflow-hidden">
-          {/* Subtle pattern */}
-          <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, black 1px, transparent 0)', backgroundSize: '40px 40px' }} />
-          
-          <div className="w-full max-w-5xl mx-auto py-16 sm:py-24 relative z-10">
-            <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-black/40 mb-5 sm:mb-7 block">
-              À propos
-            </span>
-            <h1 className="font-serif font-medium text-black mb-7 sm:mb-9">Notre mission</h1>
-            <p className="text-base sm:text-xl md:text-2xl text-black/50 leading-relaxed max-w-3xl font-light">
-              Former, connecter et préparer les étudiants aux métiers de la finance de demain.
-            </p>
+      <main className="bg-[#f6f4ef] text-[#141414]">
+        <PageHeader label="À propos" title="Notre mission" intro="Former, connecter et préparer les étudiants aux métiers de la finance de demain." />
+
+        <Block label="Qui sommes-nous" title="Une association d'excellence">
+          <p>
+            Aix Finance Club est une association étudiante de l&apos;Université d&apos;Aix-Marseille (AMU), basée sur le campus Pauliane à Aix-en-Provence. Nous réunissons des étudiants passionnés par la finance, l&apos;économie et les marchés financiers.
+          </p>
+          <p>
+            Notre objectif est de créer un pont entre le monde académique et le monde professionnel, en offrant à nos membres des opportunités de développement personnel et professionnel à travers des événements, des formations et un réseau solide.
+          </p>
+        </Block>
+
+        <section className="px-5 py-10 sm:px-8 sm:py-14 lg:px-12">
+          <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#e8e4da]">
+              <Image src="/images/img-5016.jpg" alt="Networking Aix Finance Club" fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover object-center" />
+            </div>
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#e8e4da]">
+              <Image src="/images/img-5038.jpg" alt="Étudiants attentifs" fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover object-center" />
+            </div>
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#e8e4da]">
+              <Image src="/images/img-5151.jpeg" alt="Participants MasterClass" fill sizes="(min-width: 640px) 33vw, 100vw" className="object-cover object-center" />
+            </div>
           </div>
         </section>
 
-        {/* Qui sommes-nous - Premium Dark */}
-        <section className="py-24 sm:py-32 lg:py-44 px-4 sm:px-6 lg:px-8 bg-[#0a0a0a]">
-          <div className="w-full max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-28 items-center">
-              <div>
-                <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-4 sm:mb-5 block">
-                  Qui sommes-nous
-                </span>
-                <h2 className="font-serif font-medium text-white mb-7 sm:mb-9">
-                  Une association d&apos;excellence
-                </h2>
-                <div className="space-y-5 sm:space-y-7 text-white/40 leading-relaxed text-base sm:text-lg">
-                  <p>
-                    Aix Finance Club est une association étudiante de l&apos;Université d&apos;Aix-Marseille (AMU), basée sur le
-                    campus Pauliane à Aix-en-Provence. Nous réunissons des étudiants passionnés par la finance, l&apos;économie
-                    et les marchés financiers.
-                  </p>
-                  <p>
-                    Notre objectif est de créer un pont entre le monde académique et le monde professionnel, en offrant à
-                    nos membres des opportunités de développement personnel et professionnel à travers des événements, des
-                    formations et un réseau solide.
-                  </p>
-                </div>
+        <Block label="Notre approche" title="Excellence et professionnalisme">
+          <p>
+            Nous adoptons une approche institutionnelle et professionnelle, inspirée des standards des grandes institutions financières. Notre club se distingue par son sérieux, sa rigueur et son engagement envers l&apos;excellence académique et professionnelle.
+          </p>
+          <p>
+            Chaque membre bénéficie d&apos;un accompagnement personnalisé, d&apos;un accès privilégié à notre réseau de professionnels et d&apos;opportunités de formation continue dans un environnement stimulant et collaboratif.
+          </p>
+        </Block>
+
+        <Block label="Ce que nous faisons" title="Nos initiatives">
+          <div className="grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2">
+            {INITIATIVES.map((it) => (
+              <div key={it.n} className="border-t border-[#dcd8cf] pt-5">
+                <p className="text-xs tracking-[0.2em] text-[#6b6b66]">{it.n}</p>
+                <h3 className="mt-3 font-serif text-2xl text-[#141414]">{it.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed sm:text-base">{it.text}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4 sm:gap-5">
-                <div className="space-y-4 sm:space-y-5">
-                  <div className="relative aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden bg-white/[0.02] border border-white/[0.04] group">
-                    <img
-                      src="/images/img-5016.jpg"
-                      alt="Networking Aix Finance Club"
-                      className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="relative aspect-[4/3] rounded-2xl sm:rounded-3xl overflow-hidden bg-white/[0.02] border border-white/[0.04] group">
-                    <img 
-                      src="/images/img-5038.jpg" 
-                      alt="Étudiants attentifs" 
-                      className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105" 
-                    />
-                  </div>
-                </div>
-                <div className="pt-8 sm:pt-10">
-                  <div className="relative aspect-[3/4] rounded-2xl sm:rounded-3xl overflow-hidden bg-white/[0.02] border border-white/[0.04] group">
-                    <img
-                      src="/images/img-5151.jpeg"
-                      alt="Participants MasterClass"
-                      className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
-        </section>
+        </Block>
 
-        {/* Notre approche - Premium */}
-        <section className="py-24 sm:py-32 lg:py-44 px-4 sm:px-6 lg:px-8 bg-[#0f0f0f] relative">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-          
-          <div className="w-full max-w-4xl mx-auto">
-            <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-4 sm:mb-5 block">
-              Notre approche
-            </span>
-            <h2 className="font-serif font-medium text-white mb-7 sm:mb-9">
-              Excellence et professionnalisme
-            </h2>
-            <div className="space-y-5 sm:space-y-7 text-base sm:text-lg text-white/40 leading-relaxed">
-              <p>
-                Nous adoptons une approche institutionnelle et professionnelle, inspirée des standards des grandes
-                institutions financières. Notre club se distingue par son sérieux, sa rigueur et son engagement envers
-                l&apos;excellence académique et professionnelle.
-              </p>
-              <p>
-                Chaque membre bénéficie d&apos;un accompagnement personnalisé, d&apos;un accès privilégié à notre réseau de
-                professionnels et d&apos;opportunités de formation continue dans un environnement stimulant et collaboratif.
-              </p>
-            </div>
-          </div>
-        </section>
+        <Block label="Vision" title="Notre ambition">
+          <p>
+            Devenir la référence des associations étudiantes finance dans le sud de la France. Nous visons à créer un écosystème dynamique où les étudiants peuvent explorer les différentes facettes de la finance, développer leurs compétences techniques et construire un réseau professionnel solide.
+          </p>
+          <p>
+            À travers nos actions, nous souhaitons faciliter l&apos;insertion professionnelle de nos membres dans les métiers du conseil en fusion-acquisition, des marchés financiers, du private equity, de la gestion d&apos;actifs et du corporate finance.
+          </p>
+        </Block>
 
-        {/* Nos initiatives - Premium Grid */}
-        <section className="py-24 sm:py-32 lg:py-44 px-4 sm:px-6 lg:px-8 bg-[#0a0a0a] relative">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-          
-          <div className="w-full max-w-7xl mx-auto">
-            <div className="max-w-3xl mb-14 sm:mb-20">
-              <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-4 sm:mb-5 block">
-                Ce que nous faisons
-              </span>
-              <h2 className="font-serif font-medium text-white">
-                Nos initiatives
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
-              {initiatives.map((initiative, index) => (
-                <div 
-                  key={initiative.title} 
-                  className="group relative p-7 sm:p-9 lg:p-11 rounded-2xl sm:rounded-3xl border border-white/[0.04] bg-white/[0.02] hover:border-accent/30 hover:bg-white/[0.04] transition-all duration-500 overflow-hidden"
-                >
-                  {/* Hover glow */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  <div className="relative z-10">
-                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-white/[0.05] border border-white/[0.06] text-white flex items-center justify-center mb-7 sm:mb-9 group-hover:bg-accent/10 group-hover:border-accent/20 group-hover:scale-105 transition-all duration-500">
-                      <initiative.icon className="h-6 w-6 sm:h-7 sm:w-7 text-white/60 group-hover:text-accent transition-colors duration-500" />
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-white mb-3 sm:mb-4">{initiative.title}</h3>
-                    <p className="text-sm sm:text-[15px] text-white/40 leading-relaxed">{initiative.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Notre ambition - Premium */}
-        <section className="py-24 sm:py-32 lg:py-44 px-4 sm:px-6 lg:px-8 bg-[#0f0f0f] relative">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-          
-          <div className="w-full max-w-4xl mx-auto">
-            <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-4 sm:mb-5 block">
-              Vision
-            </span>
-            <h2 className="font-serif font-medium text-white mb-7 sm:mb-9">
-              Notre ambition
-            </h2>
-            <div className="space-y-5 sm:space-y-7 text-base sm:text-lg text-white/40 leading-relaxed">
-              <p>
-                Devenir la référence des associations étudiantes finance dans le sud de la France. Nous visons à créer un
-                écosystème dynamique où les étudiants peuvent explorer les différentes facettes de la finance, développer
-                leurs compétences techniques et construire un réseau professionnel solide.
-              </p>
-              <p>
-                À travers nos actions, nous souhaitons faciliter l&apos;insertion professionnelle de nos membres dans les
-                métiers du conseil en fusion-acquisition, des marchés financiers, du private equity, de la gestion
-                d&apos;actifs et du corporate finance.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Contact - Premium */}
-        <section className="py-24 sm:py-32 lg:py-44 px-4 sm:px-6 lg:px-8 bg-[#0a0a0a] relative">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-          
-          <div className="w-full max-w-5xl mx-auto">
-            <div className="max-w-3xl mb-14 sm:mb-20">
-              <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-4 sm:mb-5 block">
-                Contact
-              </span>
-              <h2 className="font-serif font-medium text-white">
-                Nous contacter
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
-              <a 
-                href="mailto:aixfinanceclub@gmail.com"
-                className="group p-7 sm:p-9 rounded-2xl sm:rounded-3xl border border-white/[0.04] bg-white/[0.02] hover:border-accent/30 hover:bg-white/[0.04] transition-all duration-500"
-              >
-                <Mail className="h-7 w-7 sm:h-8 sm:w-8 text-white/60 mb-5 sm:mb-7 group-hover:text-accent transition-colors duration-500" strokeWidth={1.5} />
-                <h3 className="font-semibold text-white mb-2 sm:mb-3">Email</h3>
-                <p className="text-white/40 text-sm group-hover:text-white/60 transition-colors break-all">
-                  aixfinanceclub@gmail.com
-                </p>
-              </a>
-              <a 
-                href="https://instagram.com/aixfinanceclub"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group p-7 sm:p-9 rounded-2xl sm:rounded-3xl border border-white/[0.04] bg-white/[0.02] hover:border-accent/30 hover:bg-white/[0.04] transition-all duration-500"
-              >
-                <Instagram className="h-7 w-7 sm:h-8 sm:w-8 text-white/60 mb-5 sm:mb-7 group-hover:text-accent transition-colors duration-500" strokeWidth={1.5} />
-                <h3 className="font-semibold text-white mb-2 sm:mb-3 inline-flex items-center gap-1">
-                  Instagram
-                  <ArrowUpRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </h3>
-                <p className="text-white/40 text-sm group-hover:text-white/60 transition-colors">
-                  @aixfinanceclub
-                </p>
-              </a>
-              <div className="p-7 sm:p-9 rounded-2xl sm:rounded-3xl bg-white/[0.02] border border-white/[0.04] sm:col-span-2 md:col-span-1">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-accent/20 mb-5 sm:mb-7" />
-                <h3 className="font-semibold text-white mb-2 sm:mb-3">Campus</h3>
-                <p className="text-white/40 text-sm">
-                  Université d&apos;Aix-Marseille (AMU)<br />
-                  Campus Pauliane, Aix-en-Provence
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <Block label="Contact" title="Nous contacter">
+          <ul className="divide-y divide-[#dcd8cf] border-y border-[#dcd8cf]">
+            <li>
+              <Link href="mailto:aixfinanceclub@gmail.com" className="group flex flex-wrap items-center justify-between gap-2 py-5">
+                <span className="text-xs uppercase tracking-[0.2em] text-[#6b6b66]">Email</span>
+                <span className="text-[#141414] underline-offset-4 group-hover:underline">aixfinanceclub@gmail.com</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="https://instagram.com/aixfinanceclub" target="_blank" rel="noopener noreferrer" className="group flex flex-wrap items-center justify-between gap-2 py-5">
+                <span className="text-xs uppercase tracking-[0.2em] text-[#6b6b66]">Instagram</span>
+                <span className="text-[#141414] underline-offset-4 group-hover:underline">@aixfinanceclub</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="https://www.linkedin.com/company/aix-finance-club" target="_blank" rel="noopener noreferrer" className="group flex flex-wrap items-center justify-between gap-2 py-5">
+                <span className="text-xs uppercase tracking-[0.2em] text-[#6b6b66]">LinkedIn</span>
+                <span className="text-[#141414] underline-offset-4 group-hover:underline">Aix Finance Club</span>
+              </Link>
+            </li>
+            <li className="flex flex-wrap items-center justify-between gap-2 py-5">
+              <span className="text-xs uppercase tracking-[0.2em] text-[#6b6b66]">Campus</span>
+              <span className="text-[#141414]">Université d&apos;Aix-Marseille (AMU), Campus Pauliane, Aix-en-Provence</span>
+            </li>
+          </ul>
+        </Block>
       </main>
       <Footer />
     </>

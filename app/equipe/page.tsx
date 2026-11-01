@@ -1,148 +1,66 @@
+import Link from "next/link"
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
-import { Linkedin, ArrowUpRight } from "lucide-react"
-import { createClient } from "@/lib/supabase/server"
+import { PageHeader } from "@/components/page-header"
+import { getTeamMembers, type TeamMemberItem } from "@/lib/public-data"
 
-interface TeamMember {
-  id: string
-  first_name: string
-  last_name: string
-  role: string
-  photo_url: string | null
-  linkedin_url: string | null
-  display_order: number
+export const revalidate = 60
+
+function initials(m: TeamMemberItem) {
+  return `${m.first_name?.[0] || ""}${m.last_name?.[0] || ""}`.toUpperCase()
 }
 
-function getInitials(firstName: string, lastName: string): string {
-  return `${firstName[0]}${lastName[0]}`.toUpperCase()
+function Photo({ m, className }: { m: TeamMemberItem; className: string }) {
+  return (
+    <div className={`relative overflow-hidden bg-[#e8e4da] ${className}`}>
+      {m.photo_url ? (
+        <img src={m.photo_url} alt={`${m.first_name} ${m.last_name}`} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover" style={{ objectPosition: "50% 20%" }} />
+      ) : (
+        <span className="absolute inset-0 flex items-center justify-center font-serif text-4xl text-[#6b6b66]">{initials(m)}</span>
+      )}
+    </div>
+  )
 }
 
 export default async function EquipePage() {
-  const supabase = await createClient()
-  const { data: members = [] } = await supabase
-    .from("team_members")
-    .select("*")
-    .order("display_order", { ascending: true })
-
-  const allMembers = (members as TeamMember[]) || []
-  
-  // Separate president (display_order = 0) from bureau members
-  const presidentMember = allMembers.find((m) => m.display_order === 0)
-  const bureauMembers = allMembers.filter((m) => m.display_order > 0)
+  const members = await getTeamMembers()
+  const president = members.find((m) => m.display_order === 0)
+  const others = members.filter((m) => m.id !== president?.id)
 
   return (
     <>
       <Navigation />
-      <main>
-        {/* Hero - Premium */}
-        <section className="min-h-[45vh] sm:min-h-[55vh] flex items-center px-4 sm:px-6 lg:px-8 bg-[#0a0a0a] pt-24 sm:pt-28 relative overflow-hidden">
-          {/* Gradient orbs */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute top-1/4 -left-20 w-[40vw] max-w-[500px] h-[40vw] max-h-[500px] bg-accent/[0.03] rounded-full blur-[100px]" />
-            <div className="absolute bottom-0 right-0 w-[30vw] max-w-[400px] h-[30vw] max-h-[400px] bg-accent/[0.02] rounded-full blur-[80px]" />
-          </div>
-          
-          <div className="w-full max-w-5xl mx-auto py-16 sm:py-24 relative z-10">
-            <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-5 sm:mb-7 block">
-              L&apos;équipe
-            </span>
-            <h1 className="font-serif font-medium text-white mb-7 sm:mb-9">
-              Notre équipe
-            </h1>
-            <p className="text-base sm:text-xl md:text-2xl text-white/40 leading-relaxed max-w-3xl font-light">
-              Une équipe passionnée et engagée pour faire vivre l&apos;association et développer vos compétences en finance.
-            </p>
-          </div>
-        </section>
+      <main className="bg-[#f6f4ef] text-[#141414]">
+        <PageHeader label="L'équipe" title="Notre équipe" intro="Une équipe passionnée et engagée pour faire vivre l'association et développer vos compétences en finance." />
 
-        {/* Bureau - Premium */}
-        <section className="py-24 sm:py-32 lg:py-44 px-4 sm:px-6 lg:px-8 bg-[#0f0f0f] relative">
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
-          
-          <div className="w-full max-w-7xl mx-auto">
-            <div className="mb-14 sm:mb-20">
-              <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-4 sm:mb-5 block">
-                Direction
-              </span>
-              <h2 className="font-serif font-medium text-white">Bureau Exécutif</h2>
+        <section className="px-5 pb-20 sm:px-8 sm:pb-28 lg:px-12">
+          <div className="mx-auto max-w-[1400px]">
+            <div className="flex items-end justify-between border-b border-[#141414] pb-3">
+              <h2 className="font-serif text-2xl tracking-tight sm:text-3xl">Bureau exécutif</h2>
+              {members.length > 0 && <p className="text-xs uppercase tracking-[0.15em] text-[#6b6b66]">{members.length} membres</p>}
             </div>
 
-            {/* President Card - Featured (if exists) */}
-            {presidentMember && (
-              <div className="flex justify-center mb-16 sm:mb-24">
-                <div className="group text-center max-w-sm">
-                  <div className="relative mb-6 sm:mb-8">
-                    <div className="w-40 h-40 sm:w-52 sm:h-52 mx-auto rounded-full overflow-hidden ring-2 ring-white/[0.06] shadow-2xl shadow-black/50 bg-white/[0.02] flex items-center justify-center">
-                      {presidentMember.photo_url ? (
-                        <img
-                          src={presidentMember.photo_url}
-                          alt={`${presidentMember.first_name} ${presidentMember.last_name}`}
-                          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                        />
-                      ) : (
-                        <span className="text-4xl sm:text-5xl font-bold text-accent/60">
-                          {getInitials(presidentMember.first_name, presidentMember.last_name)}
-                        </span>
-                      )}
-                    </div>
-                    {/* Glow effect */}
-                    <div className="absolute inset-0 rounded-full bg-accent/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2">
-                    {presidentMember.first_name} {presidentMember.last_name}
-                  </h3>
-                  <p className="text-sm sm:text-base text-white/40 mb-5 sm:mb-7">{presidentMember.role}</p>
-                  {presidentMember.linkedin_url && (
-                    <a
-                      href={presidentMember.linkedin_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/[0.06] text-[11px] sm:text-[12px] font-semibold tracking-wider uppercase text-white/60 hover:text-white hover:border-white/10 hover:bg-white/[0.06] transition-all duration-300 group/link"
-                    >
-                      <Linkedin className="h-4 w-4" />
-                      LinkedIn
-                      <ArrowUpRight className="h-3 w-3 opacity-0 group-hover/link:opacity-100 transition-opacity duration-300" />
-                    </a>
-                  )}
+            {members.length === 0 && <p className="py-10 text-[#4a4a46]">Aucun membre à afficher pour le moment.</p>}
+
+            {president && (
+              <div className="grid grid-cols-1 gap-8 border-b border-[#dcd8cf] py-10 sm:py-14 lg:grid-cols-12 lg:gap-12">
+                <Photo m={president} className="aspect-[4/5] lg:col-span-4" />
+                <div className="flex flex-col justify-end lg:col-span-8">
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-[#6b6b66]">{president.role}</p>
+                  <h3 className="mt-3 font-serif text-4xl leading-tight tracking-tight sm:text-6xl">{president.first_name} {president.last_name}</h3>
+                  {president.linkedin_url && <Link href={president.linkedin_url} target="_blank" rel="noopener noreferrer" className="mt-6 text-xs uppercase tracking-[0.15em] underline decoration-[#141414]/30 underline-offset-4 hover:decoration-[#141414]">LinkedIn →</Link>}
                 </div>
               </div>
             )}
 
-            {/* Bureau Members - Premium grid */}
-            {bureauMembers.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12">
-                {bureauMembers.map((member) => (
-                  <div key={member.id} className="group text-center">
-                    <div className="relative mb-5 sm:mb-7">
-                      <div className="w-28 h-28 sm:w-36 sm:h-36 mx-auto rounded-full overflow-hidden bg-white/[0.02] ring-1 ring-white/[0.06] flex items-center justify-center group-hover:ring-accent/30 transition-all duration-500">
-                        {member.photo_url ? (
-                          <img
-                            src={member.photo_url}
-                            alt={`${member.first_name} ${member.last_name}`}
-                            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                          />
-                        ) : (
-                          <span className="text-2xl sm:text-3xl font-bold text-accent/50">
-                            {getInitials(member.first_name, member.last_name)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <h3 className="text-sm sm:text-base font-semibold text-white mb-1.5">
-                      {member.first_name} {member.last_name}
-                    </h3>
-                    <p className="text-[11px] sm:text-[13px] text-white/35 mb-4 sm:mb-5 line-clamp-2">{member.role}</p>
-                    {member.linkedin_url && (
-                      <a
-                        href={member.linkedin_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-medium text-white/40 hover:text-accent transition-colors duration-300 group/link"
-                      >
-                        <Linkedin className="h-3 w-3" />
-                        <span className="opacity-0 group-hover/link:opacity-100 transition-opacity duration-300">LinkedIn</span>
-                      </a>
-                    )}
+            {others.length > 0 && (
+              <div className="grid grid-cols-2 gap-x-5 gap-y-12 pt-10 sm:pt-14 md:grid-cols-3 lg:grid-cols-4">
+                {others.map((m) => (
+                  <div key={m.id}>
+                    <Photo m={m} className="aspect-[4/5]" />
+                    <h3 className="mt-4 font-serif text-xl leading-snug">{m.first_name} {m.last_name}</h3>
+                    <p className="mt-1 text-sm text-[#6b6b66]">{m.role}</p>
+                    {m.linkedin_url && <Link href={m.linkedin_url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-[11px] uppercase tracking-[0.15em] underline decoration-[#141414]/30 underline-offset-4 hover:decoration-[#141414]">LinkedIn →</Link>}
                   </div>
                 ))}
               </div>
