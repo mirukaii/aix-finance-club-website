@@ -505,3 +505,18 @@ div[id^="v0-built-with-button"] {
 }
 .animate-marquee { animation: marquee 25s linear infinite; }
 .animate-marquee:hover { animation-play-state: paused; }
+
+@keyframes afc-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.afc-marquee {
+  display: flex;
+  width: max-content;
+  animation: afc-marquee 40s linear infinite;
+  will-change: transform;
+}
+.afc-marquee:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .afc-marquee { animation: none; }
+}
