@@ -263,3 +263,74 @@ export async function getPublicationById(id: string): Promise<PublicationFull | 
     return null
   }
 }
+
+export type PartnerFull = {
+  id: string
+  name: string
+  logo_url: string | null
+  website_url: string | null
+  category: string | null
+  partnership_description: string | null
+}
+
+export async function getPartnersFull(): Promise<PartnerFull[]> {
+  try {
+    const supabase = db()
+    if (!supabase) return []
+    const { data, error } = await supabase.from("partners").select("*").order("display_order", { ascending: true })
+    if (error || !data) return []
+    return data.map((p: any) => ({
+      id: String(p.id),
+      name: p.name || "",
+      logo_url: p.logo_url || null,
+      website_url: p.website_url || null,
+      category: p.category || null,
+      partnership_description: p.partnership_description || null,
+    }))
+  } catch {
+    return []
+  }
+}
+
+export type JobPositionItem = {
+  id: string
+  title: string
+  department: string
+  description: string | null
+  responsibilities: string | null
+}
+
+export async function getOpenPositions(): Promise<JobPositionItem[]> {
+  try {
+    const supabase = db()
+    if (!supabase) return []
+    const { data, error } = await supabase.from("job_positions").select("*").eq("is_open", true).order("display_order", { ascending: true })
+    if (error || !data) return []
+    return data.map((p: any) => ({
+      id: String(p.id),
+      title: p.title || "",
+      department: p.department || "",
+      description: p.description || null,
+      responsibilities: p.responsibilities || null,
+    }))
+  } catch {
+    return []
+  }
+}
+
+export type InterviewSlotItem = {
+  id: string
+  label: string
+}
+
+export async function getActiveSlots(): Promise<InterviewSlotItem[]> {
+  try {
+    const supabase = db()
+    if (!supabase) return []
+    const { data, error } = await supabase.from("interview_slots").select("*").eq("is_active", true).order("display_order", { ascending: true })
+    if (error || !data) return []
+    return data.map((s: any) => ({ id: String(s.id), label: s.label || "" }))
+  } catch {
+    return []
+  }
+}
