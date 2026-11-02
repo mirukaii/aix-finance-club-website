@@ -167,3 +167,53 @@ export async function getTeamMembers(): Promise<TeamMemberItem[]> {
     return []
   }
 }
+
+export type EventFull = {
+  id: string
+  title: string
+  description: string | null
+  date: string
+  time: string | null
+  location: string | null
+  image_url: string | null
+  ticket_url: string | null
+  category: string | null
+}
+
+function mapEvent(e: any): EventFull {
+  return {
+    id: String(e.id),
+    title: e.title || "",
+    description: e.description || null,
+    date: e.date,
+    time: e.time || null,
+    location: e.location || null,
+    image_url: e.image_url || null,
+    ticket_url: e.ticket_url || null,
+    category: e.category || null,
+  }
+}
+
+export async function getAllEvents(): Promise<EventFull[]> {
+  try {
+    const supabase = db()
+    if (!supabase) return []
+    const { data, error } = await supabase.from("events").select("*").order("date", { ascending: true })
+    if (error || !data) return []
+    return data.filter((e: any) => e.date).map(mapEvent)
+  } catch {
+    return []
+  }
+}
+
+export async function getEventById(id: string): Promise<EventFull | null> {
+  try {
+    const supabase = db()
+    if (!supabase) return null
+    const { data, error } = await supabase.from("events").select("*").eq("id", id).maybeSingle()
+    if (error || !data) return null
+    return mapEvent(data)
+  } catch {
+    return null
+  }
+}
