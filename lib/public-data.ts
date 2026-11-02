@@ -217,3 +217,49 @@ export async function getEventById(id: string): Promise<EventFull | null> {
     return null
   }
 }
+
+import type { PublicationFull } from "@/lib/pub-utils"
+
+function mapPublication(p: any): PublicationFull {
+  return {
+    id: String(p.id),
+    title: p.title || "",
+    description: p.description || null,
+    type: p.type || null,
+    category: p.category || null,
+    cover_image: p.cover_image || null,
+    slides: Array.isArray(p.slides) ? p.slides.filter(Boolean) : null,
+    content: p.content || null,
+    author: p.author || null,
+    read_time: p.read_time ? String(p.read_time) : null,
+    published_at: p.published_at || p.created_at || null,
+    tags: Array.isArray(p.tags) ? p.tags : null,
+  }
+}
+
+export async function getAllPublications(): Promise<PublicationFull[]> {
+  try {
+    const supabase = db()
+    if (!supabase) return []
+    const { data, error } = await supabase
+      .from("publications")
+      .select("*")
+      .order("published_at", { ascending: false, nullsFirst: false })
+    if (error || !data) return []
+    return data.map(mapPublication)
+  } catch {
+    return []
+  }
+}
+
+export async function getPublicationById(id: string): Promise<PublicationFull | null> {
+  try {
+    const supabase = db()
+    if (!supabase) return null
+    const { data, error } = await supabase.from("publications").select("*").eq("id", id).maybeSingle()
+    if (error || !data) return null
+    return mapPublication(data)
+  } catch {
+    return null
+  }
+}

@@ -1,341 +1,153 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useCallback, useEffect, useState, type TouchEvent as ReactTouchEvent } from "react"
 import Link from "next/link"
-import { ArrowLeft, ChevronLeft, ChevronRight, X, Share2, Linkedin, Twitter, Maximize2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { fmtDate, type PublicationFull } from "@/lib/pub-utils"
+import { ShareBar } from "@/components/publications/share-bar"
 
-interface Publication {
-  id: string
-  title: string
-  description: string | null
-  type: string | null
-  category: string | null
-  cover_image: string | null
-  slides: string[] | null
-  author: string | null
-  read_time: string | null
-  published_at: string
-}
+const arrow = "absolute top-1/2 -translate-y-1/2 border border-[#141414] bg-[#f6f4ef] px-3.5 py-3 text-lg leading-none text-[#141414] transition-colors hover:bg-[#141414] hover:text-[#f6f4ef]"
 
-interface CarouselViewProps {
-  publication: Publication
-}
-
-export function CarouselView({ publication }: CarouselViewProps) {
+export function CarouselView({ publication }: { publication: PublicationFull }) {
+  const slides = publication.slides || []
+  const total = slides.length
   const [current, setCurrent] = useState(0)
-  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [fullscreen, setFullscreen] = useState(false)
   const [touchStart, setTouchStart] = useState<number | null>(null)
   const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
-  const slides = publication.slides || []
-  const total = slides.length
+  const goTo = useCallback(
+    (i: number) => {
+      if (total === 0) return
+      setCurrent(((i % total) + total) % total)
+    },
+    [total]
+  )
 
-  const shareUrl = typeof window !== "undefined" ? window.location.href : ""
-  const shareText = `${publication.title} - Aix Finance Club`
-
-  const goTo = useCallback((index: number) => {
-    if (index < 0) setCurrent(total - 1)
-    else if (index >= total) setCurrent(0)
-    else setCurrent(index)
-  }, [total])
-
-  const onTouchStart = (e: React.TouchEvent) => {
+  const onTouchStart = (e: ReactTouchEvent) => {
     setTouchEnd(null)
     setTouchStart(e.targetTouches[0].clientX)
   }
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX)
-  }
-
+  const onTouchMove = (e: ReactTouchEvent) => setTouchEnd(e.targetTouches[0].clientX)
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return
+    if (touchStart === null || touchEnd === null) return
     const distance = touchStart - touchEnd
     if (distance > 50) goTo(current + 1)
     if (distance < -50) goTo(current - 1)
   }
 
-  // Keyboard navigation
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") goTo(current - 1)
       if (e.key === "ArrowRight") goTo(current + 1)
-      if (e.key === "Escape") setIsFullscreen(false)
+      if (e.key === "Escape") setFullscreen(false)
     }
-    window.addEventListener("keydown", handleKey)
-    return () => window.removeEventListener("keydown", handleKey)
+    window.addEventListener("keydown", onKey)
+    return () => window.removeEventListener("keydown", onKey)
   }, [current, goTo])
 
-  if (slides.length === 0) {
+  useEffect(() => {
+    if (total < 2) return
+    ;[current + 1, current - 1].forEach((i) => {
+      const src = slides[((i % total) + total) % total]
+      if (src) {
+        const img = new window.Image()
+        img.src = src
+      }
+    })
+  }, [current, slides, total])
+
+  useEffect(() => {
+    document.body.style.overflow = fullscreen ? "hidden" : ""
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [fullscreen])
+
+  if (total === 0) {
     return (
-      <div className="pt-32 pb-20 px-4 text-center">
-        <p className="text-muted-foreground">Aucune slide disponible</p>
-        <Link href="/publications" className="text-accent mt-4 inline-block">
-          Retour aux publications
-        </Link>
+      <div className="bg-[#f6f4ef] px-5 pb-24 pt-40 text-center text-[#141414]">
+        <p className="text-[#4a4a46]">Aucune slide disponible.</p>
+        <Link href="/publications" className="mt-6 inline-block border border-[#141414] px-7 py-3.5 text-xs uppercase tracking-[0.2em] transition-colors hover:bg-[#141414] hover:text-[#f6f4ef]">Retour aux publications</Link>
       </div>
     )
   }
 
+  const meta = [publication.author, fmtDate(publication.published_at), `${total} slides`].filter(Boolean).join(" · ")
+
   return (
-    <>
-      {/* Header */}
-      <header className="pt-24 sm:pt-28 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Back Button */}
-          <Link
-            href="/publications"
-            className="inline-flex items-center gap-2 text-sm text-foreground/70 hover:text-foreground mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Toutes les publications
-          </Link>
-
-          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
-            <div className="max-w-2xl">
-              {/* Category */}
-              {publication.category && (
-                <span className="inline-block text-[11px] font-semibold tracking-[0.2em] uppercase text-accent mb-3">
-                  {publication.category}
-                </span>
-              )}
-
-              {/* Title */}
-              <h1 className="font-serif font-medium text-foreground mb-4 text-balance">
-                {publication.title}
-              </h1>
-
-              {/* Description */}
-              {publication.description && (
-                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                  {publication.description}
-                </p>
-              )}
-
-              {/* Meta */}
-              <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-muted-foreground">
-                {publication.author && (
-                  <span>{publication.author}</span>
-                )}
-                <span>
-                  {new Date(publication.published_at).toLocaleDateString("fr-FR", { 
-                    day: "numeric", 
-                    month: "long", 
-                    year: "numeric" 
-                  })}
-                </span>
-                <span>{total} slides</span>
-              </div>
-            </div>
-
-            {/* Share Buttons */}
-            <div className="flex items-center gap-3">
-              <a
-                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-accent hover:border-accent transition-colors"
-                aria-label="Partager sur LinkedIn"
-              >
-                <Linkedin className="w-4 h-4" />
-              </a>
-              <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-accent hover:border-accent transition-colors"
-                aria-label="Partager sur Twitter"
-              >
-                <Twitter className="w-4 h-4" />
-              </a>
-              <button
-                onClick={() => setIsFullscreen(true)}
-                className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-accent hover:border-accent transition-colors"
-                aria-label="Plein écran"
-              >
-                <Maximize2 className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+    <div className="bg-[#f6f4ef] text-[#141414]">
+      <header className="px-5 pb-8 pt-28 sm:px-8 sm:pt-36 lg:px-12">
+        <div className="mx-auto max-w-[1100px]">
+          <Link href="/publications" className="text-xs uppercase tracking-[0.15em] text-[#6b6b66] transition-colors hover:text-[#141414]">← Toutes les publications</Link>
+          {publication.category && <p className="mt-10 text-[11px] uppercase tracking-[0.2em] text-[#6b6b66]">{publication.category} · Carousel</p>}
+          <h1 className="mt-4 max-w-[22ch] text-balance font-serif text-[clamp(2.2rem,5vw,4.25rem)] font-normal leading-[1.06] tracking-tight">{publication.title}</h1>
+          {publication.description && <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#4a4a46] sm:text-lg">{publication.description}</p>}
+          <p className="mt-5 text-sm text-[#6b6b66]">{meta}</p>
         </div>
       </header>
 
-      {/* Carousel */}
-      <section className="pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          {/* Main Slide */}
-          <div
-            className="relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-[16/9] rounded-2xl overflow-hidden bg-secondary/30 shadow-2xl"
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-          >
-            {slides.map((src, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "absolute inset-0 transition-opacity duration-500",
-                  i === current ? "opacity-100 z-10" : "opacity-0 z-0"
-                )}
-              >
-                <img
-                  src={src}
-                  alt={`${publication.title} - Slide ${i + 1}`}
-                  className="w-full h-full object-contain bg-card"
-                />
-              </div>
-            ))}
-
-            {/* Navigation Arrows */}
+      <section className="px-5 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-[1100px]">
+          <div className="relative aspect-[4/3] w-full select-none overflow-hidden bg-[#e8e4da] sm:aspect-[16/10]" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+            <img key={current} src={slides[current]} alt={`${publication.title}, slide ${current + 1}`} decoding="async" className="absolute inset-0 h-full w-full object-contain" />
             {total > 1 && (
               <>
-                <button
-                  onClick={() => goTo(current - 1)}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 flex items-center justify-center text-foreground hover:bg-background transition-colors shadow-lg z-20"
-                  aria-label="Slide précédente"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => goTo(current + 1)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-background/90 backdrop-blur-sm border border-border/50 flex items-center justify-center text-foreground hover:bg-background transition-colors shadow-lg z-20"
-                  aria-label="Slide suivante"
-                >
-                  <ChevronRight className="w-6 h-6" />
-                </button>
+                <button type="button" onClick={() => goTo(current - 1)} className={`${arrow} left-3`} aria-label="Slide précédente">←</button>
+                <button type="button" onClick={() => goTo(current + 1)} className={`${arrow} right-3`} aria-label="Slide suivante">→</button>
               </>
             )}
-
-            {/* Progress Counter */}
-            <div className="absolute top-4 right-4 px-4 py-2 rounded-full bg-background/90 backdrop-blur-sm text-foreground text-sm font-medium z-20">
-              {current + 1} / {total}
-            </div>
+            <div className="absolute right-3 top-3 border border-[#141414] bg-[#f6f4ef] px-3 py-1.5 text-xs tracking-[0.1em]">{current + 1} / {total}</div>
           </div>
 
-          {/* Progress Bar */}
           {total > 1 && (
-            <div className="mt-6 sm:mt-8">
-              <div className="h-1 bg-secondary rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-accent transition-all duration-300"
-                  style={{ width: `${((current + 1) / total) * 100}%` }}
-                />
-              </div>
+            <div className="mt-5 h-px w-full bg-[#dcd8cf]">
+              <div className="h-px bg-[#141414] transition-all duration-300" style={{ width: `${((current + 1) / total) * 100}%` }} />
             </div>
           )}
 
-          {/* Thumbnails */}
           {total > 1 && (
-            <div className="mt-6 sm:mt-8 flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+            <div className="mt-6 flex flex-wrap gap-2">
               {slides.map((src, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className={cn(
-                    "w-16 h-12 sm:w-20 sm:h-14 rounded-lg overflow-hidden border-2 transition-all",
-                    current === i 
-                      ? "border-accent ring-2 ring-accent/30" 
-                      : "border-border/50 opacity-60 hover:opacity-100"
-                  )}
-                  aria-label={`Aller à la slide ${i + 1}`}
-                >
-                  <img
-                    src={src}
-                    alt={`Miniature ${i + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+                <button key={i} type="button" onClick={() => goTo(i)} aria-label={`Aller à la slide ${i + 1}`} className={`h-14 w-20 overflow-hidden border transition-opacity ${current === i ? "border-[#141414] opacity-100" : "border-[#dcd8cf] opacity-60 hover:opacity-100"}`}>
+                  <img src={src} alt={`Miniature ${i + 1}`} loading="lazy" decoding="async" className="h-full w-full object-cover" />
                 </button>
               ))}
             </div>
           )}
+
+          <div className="mt-10 flex flex-wrap items-center justify-between gap-6 border-t border-[#dcd8cf] pt-8">
+            <ShareBar id={publication.id} title={publication.title} description={publication.description} />
+            <button type="button" onClick={() => setFullscreen(true)} className="border border-[#141414] px-6 py-3 text-xs uppercase tracking-[0.2em] transition-colors hover:bg-[#141414] hover:text-[#f6f4ef]">Plein écran</button>
+          </div>
         </div>
       </section>
 
-      {/* Fullscreen Modal */}
-      {isFullscreen && (
-        <div 
-          className="fixed inset-0 bg-black z-[100] flex items-center justify-center"
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-        >
-          {/* Close Button */}
-          <button
-            onClick={() => setIsFullscreen(false)}
-            className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors z-30"
-            aria-label="Fermer"
-          >
-            <X className="w-6 h-6" />
-          </button>
+      <section className="px-5 pb-24 pt-14 sm:px-8 lg:px-12">
+        <div className="mx-auto max-w-[1100px]">
+          <Link href="/publications" className="inline-block border border-[#141414] px-7 py-3.5 text-xs uppercase tracking-[0.2em] transition-colors hover:bg-[#141414] hover:text-[#f6f4ef]">← Toutes les publications</Link>
+        </div>
+      </section>
 
-          {/* Counter */}
-          <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white text-sm font-medium z-30">
-            {current + 1} / {total}
+      {fullscreen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+          <button type="button" onClick={() => setFullscreen(false)} className="absolute right-4 top-4 z-30 border border-white/40 px-4 py-2 text-xs uppercase tracking-[0.15em] text-white transition-colors hover:bg-white hover:text-black" aria-label="Fermer">Fermer ✕</button>
+          <div className="absolute left-4 top-4 z-30 text-sm text-white/80">{current + 1} / {total}</div>
+          <div className="flex h-full w-full items-center justify-center p-4 sm:p-8">
+            <img src={slides[current]} alt={`${publication.title}, slide ${current + 1}`} className="max-h-full max-w-full object-contain" />
           </div>
-
-          {/* Slide */}
-          <div className="w-full h-full flex items-center justify-center p-4 sm:p-8">
-            <img
-              src={slides[current]}
-              alt={`${publication.title} - Slide ${current + 1}`}
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
-
-          {/* Navigation */}
           {total > 1 && (
             <>
-              <button
-                onClick={() => goTo(current - 1)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors z-30"
-                aria-label="Slide précédente"
-              >
-                <ChevronLeft className="w-7 h-7" />
-              </button>
-              <button
-                onClick={() => goTo(current + 1)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors z-30"
-                aria-label="Slide suivante"
-              >
-                <ChevronRight className="w-7 h-7" />
-              </button>
+              <button type="button" onClick={() => goTo(current - 1)} className="absolute left-4 top-1/2 z-30 -translate-y-1/2 border border-white/40 px-4 py-3 text-xl text-white transition-colors hover:bg-white hover:text-black" aria-label="Slide précédente">←</button>
+              <button type="button" onClick={() => goTo(current + 1)} className="absolute right-4 top-1/2 z-30 -translate-y-1/2 border border-white/40 px-4 py-3 text-xl text-white transition-colors hover:bg-white hover:text-black" aria-label="Slide suivante">→</button>
+              <div className="absolute bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2">
+                {slides.map((_, i) => (
+                  <button key={i} type="button" onClick={() => goTo(i)} aria-label={`Aller à la slide ${i + 1}`} className={`h-2 rounded-full transition-all ${current === i ? "w-8 bg-white" : "w-2 bg-white/40 hover:bg-white/60"}`} />
+                ))}
+              </div>
             </>
-          )}
-
-          {/* Progress Dots */}
-          {total > 1 && (
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-30">
-              {slides.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => goTo(i)}
-                  className={cn(
-                    "transition-all duration-300 rounded-full",
-                    current === i 
-                      ? "w-8 h-2 bg-white" 
-                      : "w-2 h-2 bg-white/40 hover:bg-white/60"
-                  )}
-                  aria-label={`Aller à la slide ${i + 1}`}
-                />
-              ))}
-            </div>
           )}
         </div>
       )}
-
-      {/* Back Link */}
-      <section className="pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto text-center">
-          <Link
-            href="/publications"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-accent-foreground rounded-full text-sm font-medium hover:bg-accent/90 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Voir toutes les publications
-          </Link>
-        </div>
-      </section>
-    </>
+    </div>
   )
 }

@@ -1,141 +1,49 @@
-"use client"
-
 import Link from "next/link"
-import { Clock, User, FileText, Layers } from "lucide-react"
+import { PageHeader } from "@/components/page-header"
+import { fmtDate, isCarouselPub, pubImage, type PublicationFull } from "@/lib/pub-utils"
 
-interface Publication {
-  id: string
-  title: string
-  description: string | null
-  type: string | null
-  category: string | null
-  cover_image: string | null
-  slides: string[] | null
-  content: string | null
-  author: string | null
-  read_time: string | null
-  published_at: string
-}
+export function PublicationsHero({ publications }: { publications: PublicationFull[] }) {
+  const f = publications[0]
 
-interface PublicationsHeroProps {
-  publications: Publication[]
-}
-
-export function PublicationsHero({ publications }: PublicationsHeroProps) {
-  const featuredPub = publications[0]
-
-  if (!featuredPub) {
+  if (!f) {
     return (
-      <section className="pt-28 sm:pt-36 pb-20 sm:pb-24 px-4 sm:px-6 lg:px-8 bg-[#0a0a0a]">
-        <div className="max-w-7xl mx-auto">
-          <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] uppercase text-accent mb-5 block">
-            Publications
-          </span>
-          <h1 className="font-serif font-medium text-white mb-7">
-            Nos analyses
-          </h1>
-          <p className="text-lg sm:text-xl text-white/40 leading-relaxed max-w-2xl font-light">
-            {"Articles d'analyse et Focus visuels sur les marchés financiers, l'économie et les métiers de la finance."}
-          </p>
-        </div>
-      </section>
+      <>
+        <PageHeader label="Publications" title="Nos analyses" intro="Articles d'analyse et Focus visuels sur les marchés financiers, l'économie et les métiers de la finance." />
+        <section className="px-5 pb-24 sm:px-8 lg:px-12">
+          <div className="mx-auto max-w-[1400px]">
+            <h2 className="font-serif text-3xl tracking-tight">Publications à venir</h2>
+            <p className="mt-3 max-w-xl leading-relaxed text-[#4a4a46]">Notre équipe rédactionnelle prépare des analyses de qualité sur les marchés financiers et l&apos;actualité économique.</p>
+          </div>
+        </section>
+      </>
     )
   }
 
-  const isCarousel = featuredPub.type === "carousel" || (featuredPub.slides && featuredPub.slides.length > 0 && !featuredPub.content)
-  const hasContent = featuredPub.content && featuredPub.content.trim().length > 0
-  const coverImage = featuredPub.cover_image || (featuredPub.slides?.[0])
+  const img = pubImage(f)
+  const carousel = isCarouselPub(f)
+  const label = [carousel ? "Carousel" : "Article", f.category].filter(Boolean).join(" · ")
+  const meta = [f.author, fmtDate(f.published_at), f.read_time, carousel && f.slides && f.slides.length > 0 ? `${f.slides.length} slides` : null].filter(Boolean).join(" · ")
 
   return (
-    <section className="pt-20 bg-[#0a0a0a]">
-      {/* Featured Article - Full Width Hero */}
-      <Link 
-        href={`/publications/${featuredPub.id}`}
-        className="block relative group"
-      >
-        <div className="relative min-h-[75vh] sm:min-h-[85vh] flex items-end overflow-hidden">
-          {/* Background Image */}
-          {coverImage ? (
-            <div className="absolute inset-0">
-              <img
-                src={coverImage}
-                alt={featuredPub.title}
-                className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-              />
-              {/* Premium Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent" />
-              <div className="absolute inset-0 bg-[#0a0a0a]/20" />
+    <>
+      <PageHeader label="Publications" title="Nos analyses" intro="Articles d'analyse et Focus visuels sur les marchés financiers, l'économie et les métiers de la finance." />
+      <section className="px-5 pb-16 sm:px-8 sm:pb-24 lg:px-12">
+        <div className="mx-auto max-w-[1400px]">
+          <p className="mb-6 text-[11px] uppercase tracking-[0.2em] text-[#6b6b66]">À la une</p>
+          <Link href={`/publications/${f.id}`} className="group grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+            <div className="relative aspect-[4/3] overflow-hidden bg-[#e8e4da] lg:col-span-7">
+              {img && <img src={img} alt={f.title} decoding="async" className="absolute inset-0 h-full w-full object-contain" />}
             </div>
-          ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-[#0a0a0a]" />
-          )}
-
-          {/* Content */}
-          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14 sm:pb-20 lg:pb-24">
-            <div className="max-w-3xl">
-              {/* Badge */}
-              <div className="flex items-center gap-3 mb-6 sm:mb-8">
-                <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-accent/20 backdrop-blur-sm text-accent text-[10px] sm:text-[11px] font-semibold tracking-[0.15em] uppercase rounded-full border border-accent/20">
-                  {isCarousel ? (
-                    <>
-                      <Layers className="w-3 h-3" />
-                      Carousel
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-3 h-3" />
-                      Article
-                    </>
-                  )}
-                </span>
-                {featuredPub.category && (
-                  <span className="px-4 py-2 bg-white/[0.05] backdrop-blur-sm text-white/70 text-[10px] sm:text-[11px] font-medium tracking-[0.15em] uppercase rounded-full border border-white/10">
-                    {featuredPub.category}
-                  </span>
-                )}
-              </div>
-
-              {/* Title */}
-              <h1 className="font-serif font-medium text-white mb-5 sm:mb-7 text-balance leading-[1.1]">
-                {featuredPub.title}
-              </h1>
-
-              {/* Description */}
-              {featuredPub.description && (
-                <p className="text-base sm:text-lg lg:text-xl text-white/60 leading-relaxed mb-7 sm:mb-10 line-clamp-3 font-light">
-                  {featuredPub.description}
-                </p>
-              )}
-
-              {/* Meta */}
-              <div className="flex flex-wrap items-center gap-5 sm:gap-8 text-sm text-white/40">
-                {featuredPub.author && (
-                  <span className="inline-flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    {featuredPub.author}
-                  </span>
-                )}
-                <span>
-                  {new Date(featuredPub.published_at).toLocaleDateString("fr-FR", { 
-                    day: "numeric", 
-                    month: "long", 
-                    year: "numeric" 
-                  })}
-                </span>
-                {featuredPub.read_time && (
-                  <span className="inline-flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    {featuredPub.read_time}
-                  </span>
-                )}
-                {isCarousel && featuredPub.slides && featuredPub.slides.length > 0 && (
-                  <span>{featuredPub.slides.length} slides</span>
-                )}
-              </div>
+            <div className="flex flex-col justify-end lg:col-span-5">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-[#6b6b66]">{label}</p>
+              <h2 className="mt-3 text-balance font-serif text-3xl leading-tight tracking-tight decoration-[#141414]/30 underline-offset-4 group-hover:underline sm:text-4xl">{f.title}</h2>
+              {f.description && <p className="mt-4 line-clamp-4 leading-relaxed text-[#4a4a46]">{f.description}</p>}
+              {meta && <p className="mt-5 text-sm text-[#6b6b66]">{meta}</p>}
+              <p className="mt-6 text-xs uppercase tracking-[0.2em]">Lire →</p>
             </div>
-          </div>
+          </Link>
         </div>
-      </Link>
-    </section>
+      </section>
+    </>
   )
 }

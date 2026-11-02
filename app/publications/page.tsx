@@ -1,8 +1,8 @@
 import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
-import { createClient } from "@/lib/supabase/server"
 import { PublicationsHero } from "@/components/publications/publications-hero"
 import { PublicationsFilters } from "@/components/publications/publications-filters"
+import { getAllPublications } from "@/lib/public-data"
 
 export const metadata = {
   title: "Publications | Aix Finance Club",
@@ -12,26 +12,14 @@ export const metadata = {
 export const revalidate = 60
 
 export default async function PublicationsPage() {
-  const supabase = await createClient()
-  
-  const { data: publications } = await supabase
-    .from("publications")
-    .select("*")
-    .order("published_at", { ascending: false })
-
-  const pubs = publications || []
-
-  // Extract unique categories for filters
-  const categories = Array.from(new Set(pubs.map((p) => p.category).filter(Boolean))) as string[]
+  const pubs = await getAllPublications()
+  const categories = Array.from(new Set(pubs.map((p) => p.category).filter((c): c is string => Boolean(c))))
 
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-background">
-        {/* Hero Section with Featured Article */}
+      <main className="bg-[#f6f4ef] text-[#141414]">
         <PublicationsHero publications={pubs} />
-        
-        {/* Publications Grid with Filters */}
         <PublicationsFilters publications={pubs} categories={categories} />
       </main>
       <Footer />
